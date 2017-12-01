@@ -3,11 +3,23 @@ class ItemsController < ApplicationController
 
 
   def index
-    render json: @list
+    render json: @list.items
   end
 
   def show
+    @item = @list.items.find(params[:id])
     render json: @item
+  end
+
+  def create
+    @item = Item.new(item_params)
+    @item.list = @list
+
+    if @item.save
+      render json: @item, status: :created
+    else
+      render json: @item.errors, status: :unprocessable_entity
+    end
   end
 
 
@@ -28,7 +40,7 @@ class ItemsController < ApplicationController
 
   private
   def set_list
-    @list = @lsit.items.find(params[:list_id])
+    @list = List.find(params[:list_id])
   end
 
   def item_params
